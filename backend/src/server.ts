@@ -1,0 +1,1 @@
+console.log('chat app init!');
