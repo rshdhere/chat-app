@@ -13,9 +13,9 @@ wss.on('connection', (socket) => {
     console.log(`user connected #${userCount}`);
 
     socket.on('message', (message) => {
-        for ( let i = 0; i < allSockets.length; i++ ) {
-            const s = allSockets[i];
-            s?.send(message.toString());
-        }
+
+        allSockets.forEach(s => {
+            s.send(message.toString());
+        })
     });
 });
