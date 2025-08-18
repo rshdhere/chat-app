@@ -11,6 +11,14 @@ interface User {
 let allSockets: User[] = [];
 
 wss.on("connection", (socket) => {
+
+
+
+
+
+
+
+    
   socket.on("message", (message) => {
     const parsedMessage = JSON.parse(message.toString());
 
