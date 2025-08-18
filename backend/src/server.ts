@@ -1,40 +1,43 @@
-import { WebSocketServer, WebSocket } from 'ws';
+import { WebSocketServer, WebSocket } from "ws";
 
-const wss = new WebSocketServer({port: 8080});
+const wss = new WebSocketServer({ port: 8080 });
 
 interface User {
-    socket: WebSocket;
-    room: string;
+  socket: WebSocket;
+  room: string;
 }
 
+// eslint-disable-next-line
 let allSockets: User[] = [];
 
-wss.on('connection', (socket) => {
-    socket.on('message', (message) => {
-        // @ts-ignore
-        const parsedMessage = JSON.parse(message);
+wss.on("connection", (socket) => {
+  socket.on("message", (message) => {
+    const parsedMessage = JSON.parse(message.toString());
 
-        if (parsedMessage.type === 'join'){
-            allSockets.push({
-                socket,
-                room: parsedMessage.payload.roomId
-            });
-        };
+    if (parsedMessage.type === "join") {
+      allSockets.push({
+        socket,
+        room: parsedMessage.payload.roomId,
+      });
+    }
 
-        if(parsedMessage.type === 'chat'){
-            
-            const currentUserRoom = allSockets.find((user) => user.socket === socket)?.room;
+    if (parsedMessage.type === "chat") {
+      const currentUserRoom = allSockets.find(
+        (user) => user.socket === socket,
+      )?.room;
 
-            allSockets.forEach((user) => {
-                if (user.room === currentUserRoom) {
-                    user.socket.send(JSON.stringify({
-                        type: 'chat',
-                        payload: {
-                            message: parsedMessage.payload.message
-                        }
-                    }));
-                }
-            });
+      allSockets.forEach((user) => {
+        if (user.room === currentUserRoom) {
+          user.socket.send(
+            JSON.stringify({
+              type: "chat",
+              payload: {
+                message: parsedMessage.payload.message,
+              },
+            }),
+          );
         }
-    })
+      });
+    }
+  });
 });
